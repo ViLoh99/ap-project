@@ -12,12 +12,10 @@ This project performs **topic modeling** on German texts using **Gensim** and **
 - `/src`: Contains the core Python scripts for data processing and visualization.
   - **process_documents.py**: Processes the documents, runs topic modeling, and extracts lemmas.
   - **read_results.py**: Loads the results, visualizes topics and lemmas, and computes Jaccard similarity.
-- `/data`: Raw XML files or other data sources (not included here; see instructions below for data usage).
 - `/results`: Stores generated results such as pickled models, word clouds, and analysis output.
 
-## Installation
+## Data
 
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/username/project-name.git
-   cd project-name
+The Data used for this project are the Bundesrat files from the German Parliament Corpus (GerParCor). 
+- http://lrec2022.gerparcor.texttechnologylab.org
+- G. Abrami, M. Bagci, L. Hammerla, and A. Mehler, “German Parliamentary Corpus (GerParCor),” in Proceedings of the Language Resources and Evaluation Conference, Marseille, France, 2022, pp. 1900-1906.
