@@ -28,12 +28,9 @@ def prepare_text(raw_text):
     normalized_text = normalized_text.translate(str.maketrans("","",string.punctuation))
     normalized_text = re.sub(r"[^a-zA-Züäöß\s]", "", normalized_text)
     tokens = word_tokenize(normalized_text)
-
-    # POS Tagging and Filtering
     pos_tags = nltk.pos_tag(tokens, tagset='universal')
     pos_tags_to_keep = {"NOUN", "VERB", "ADJ"}
     filtered_tokens = [word for word, pos in pos_tags if pos in pos_tags_to_keep]
-    
     stop_words = set(stopwords.words('german'))
     filtered_text = [word for word in filtered_tokens if word.lower() not in stop_words]
     lemmatizer = WordNetLemmatizer()
@@ -116,7 +113,22 @@ def save_results(results, filename):
     with open(filename, 'wb') as f:
         pickle.dump(results, f)
 
-# Example usage:
-folder_path = '/home/ampharis/Dokumente/AP/Bundesrat/xmi/2016-2020'  # Update with actual folder path
+""" # Example usage: for one folder
+folder_path = 'your/folder/path'  # Update with actual folder path
 results = process_documents(folder_path, topn=25)  # Process the folder
 save_results(results, 'results_decade_2.pkl')  # Save the results to a pickle file
+ """
+
+# Function to process all folders in a given directory
+def process_all_folders(base_directory):
+    for folder in os.listdir(base_directory):
+        folder_path = os.path.join(base_directory, folder)
+        if os.path.isdir(folder_path):  # Check if it's a folder
+            print(f"Processing folder: {folder}")
+            results = process_documents(folder_path)
+            file_name = "topic_model_results_" + folder + ".pkl"
+            save_results(results, file_name)
+
+# Example usage: for multiple sub-folders
+base_directory = 'your/folder/path'  # Change to your main directory with subfolders
+process_all_folders(base_directory)
