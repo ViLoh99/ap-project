@@ -1,4 +1,4 @@
-# Topic Modeling and Lemma Analysis
+# Topic Modeling and (Lemma) Analysis
 
 This project performs **topic modeling** on German texts using **Gensim** and **NLTK**, with a focus on comparing topics and frequent lemmas. The project also calculates **Jaccard similarity** between topics and lemmas, and visualizes the results using word clouds and frequency plots.
 
@@ -8,12 +8,15 @@ This project performs **topic modeling** on German texts using **Gensim** and **
 - **Lemma Frequency Analysis**: Extracts and visualizes the most frequent lemmas in each document.
 - **Jaccard Similarity**: Compares the overlap between topic words and frequent lemmas.
 - **Word Clouds**: Visualizes the topics using word clouds.
+-  **Comparison of Results**: Compare topic modeling results across different time spans using histograms, normal distributions, and intersection ratio visualizations.
 
 ## Directory Structure
 - `/src`: Contains the core Python scripts for data processing and visualization.
   - **process_documents.py**: Processes the documents, runs topic modeling, and extracts lemmas.
   - **read_results.py**: Loads the results, visualizes topics and lemmas, and computes Jaccard similarity.
+  - **compare_results.py**: Loads and compares Jaccard similarity and topic intersection ratio across different time spans, visualizing the comparison using histograms, tables, and normal distributions.
 - `/results`: Stores generated results such as pickled models, word clouds, and analysis output.
+- `/comparison_results`: Stores Jaccard similarity and topic intersection ratios for different time spans for cross-period comparison.
 
 ## Data
 
@@ -35,10 +38,16 @@ Make sure to modify the base_directory path inside `process_documents.py` to poi
 ### 2. *Analyze Results*
 Once the documents have been processed and saved as pickle files, you can use the `read_results.py` script to visualize and analyze the results.
 - This script will load the saved results and allow you to visualize the word clouds, Jaccard similarity, and other data insights.
+- he Jaccard similarity and topic intersection ratio will be saved in a `Comparison Results` folder for future comparison purposes.
 
 Make sure to modify the filepath inside `read_results.py` to point to your .pkl file
 
-### 3. *Expected Results**: Ensure running the code leads to the expected output.
+### 3. *Compare Results**: Ensure running the code leads to the expected output.
+Use the `compare_results.py` script to compare Jaccard similarity and topic intersection ratio across different time spans.
+- This script will load the saved comparison files from the `/Comparison Results` folder or specific provided file paths.
+It visualizes Jaccard similarity and topic intersection ratio using histograms, normal distribution plots, and tables.
+
+### 4. *Expected Results**: Ensure running the code leads to the expected output.
 This section of the `README.md` ensures that users know exactly what to expect after running your code and what results they should see.
 
 ## Expected Results
@@ -51,8 +60,11 @@ After running the `process_documents.py` script, the following results will be s
   - Dominant topics per document.
   - Most frequent lemmas for each document.
   - Jaccard similarity calculations.
+  - Topic intersection ratio.
 
-Example of saved pickle files: `topic_model_results_2016-2020.pkl` 
+Example of saved pickle files: 
+- `topic_model_results_2016-2020.pkl`
+- `data_topic_model_2016-2020.pkl`
 
 ### Analyzing Results
 
@@ -66,3 +78,5 @@ After processing, you can load and analyze the results using `read_results.py`. 
    - Percentage of overlap between lemmas and topic words.
    
 To visualize lemma frequency for specific documents or topics, set `visualize_lemmas=True` in `read_results.py`.
+
+You can then use `compare_results.py` to visualize and compare Jaccard similarity and topic intersection ratio between different time spans.
