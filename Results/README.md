@@ -4,7 +4,8 @@ Due to size constraints on GitHub repositories, the `Results` folder containing 
 
 You can access the full `Results` folder, which includes all the `.pkl` files, word clouds, and analysis summaries, via the following link:
 
-[Access the Results Folder on OneDrive]([your-onedrive-link-here](https://drive.google.com/drive/folders/1IJ7dBWNeQV3oFPzKPdBOfAFJQqacsukL?usp=sharing))
+[Access the Results Folder on OneDrive
+](your-onedrive-link-here](https://drive.google.com/drive/folders/1IJ7dBWNeQV3oFPzKPdBOfAFJQqacsukL?usp=sharing))
 
 ### Why External Storage?
 
