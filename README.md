@@ -12,11 +12,11 @@ This project performs **topic modeling** on German texts using **Gensim** and **
 
 ## Directory Structure
 - `/src`: Contains the core Python scripts for data processing and visualization.
-  - **process_documents.py**: Processes the documents, runs topic modeling, and extracts lemmas.
+  - **lda_topic_modeling.py**: Processes the documents, runs topic modeling, and extracts lemmas.
   - **read_results.py**: Loads the results, visualizes topics and lemmas, and computes Jaccard similarity.
   - **compare_results.py**: Loads and compares Jaccard similarity and topic intersection ratio across different time spans, visualizing the comparison using histograms, tables, and normal distributions.
-- `/results`: Stores generated results such as pickled models, word clouds, and analysis output.
-- `/comparison_results`: Stores Jaccard similarity and topic intersection ratios for different time spans for cross-period comparison.
+- `/Results`: Stores Pickle files of the topic modeled data - generated with `lda_topic_modeling.py`.
+- `/Comparison Results`: Stores Pickle files with Jaccard similarity and topic intersection ratios for different time spans for cross-period comparison - generated with `read_results.py`.
 
 ## Data
 
