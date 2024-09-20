@@ -150,5 +150,5 @@ comparison_folder = 'Comparison Results'  # Folder where all the Jaccard data fi
 compare_results()
 
 # For comparing all specific files
-specific_files = ['/home/ampharis/Dokumente/AP/Project/Comparison Results/jaccard_data_topic_model_2016-2020.pkl', '/home/ampharis/Dokumente/AP/Project/Comparison Results/jaccard_data_topic_model_1949-1950.pkl']
+specific_files = ['path/file_1.pkl', 'path/file_2.pkl']    # Update with actual file path
 #compare_results(files=specific_files)
