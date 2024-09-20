@@ -146,7 +146,7 @@ def save_jaccard_and_topic_intersection(results, input_filename):
 ## Main execution point
 
 # Load the results from a pickle file
-filename = '/home/ampharis/Dokumente/AP/Project/Results/topic_model_results_2021-2025.pkl'  # Change to actual file path
+filename = '/your/path/file.pkl'  # Change to actual file path
 results = load_results(filename)
 
 # Display the top words for each topic
