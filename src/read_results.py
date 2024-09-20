@@ -4,17 +4,17 @@ import matplotlib.pyplot as plt
 from itertools import chain
 from collections import Counter
 
-# Function to load the pickle file
+# Function to load the results from a pickle file
 def load_results(filename):
     with open(filename, 'rb') as f:
         return pickle.load(f)
 
-# Function to display the top words of each topic
+# Function to display the top words of each topic from the topic modelling
 def display_topics(top_words_per_topic):
     for topic_id, words in top_words_per_topic.items():
         print(f"Topic {topic_id}: {', '.join(words)}")
 
-# Function to visualize word cloud for topics
+# Function to visualize word clouds for each topic
 def visualize_wordclouds(top_words_per_topic):
     for topic_id, words in top_words_per_topic.items():
         wordcloud = WordCloud(width=800, height=400, background_color='white').generate(' '.join(words))
@@ -38,13 +38,12 @@ def visualize_lemma_frequency(lemmas, doc_id):
     plt.xticks(rotation=45)
     plt.show()
 
-# Function to display the number of lemmas, topic words, intersections,
-# and the percentage of topic words overlapping with lemmas
+# Function to display a summary of lemmas, topic words, intersections, and the percentage of topic words overlapping with lemmas
 def display_summary(results):
     most_frequent_lemmas = set()
     all_topic_words = set()
 
-    # Update logic to handle list of tuples
+    # Collect lemmas and topic words from each document
     for result in results['comparison_results']:
         lemmas = [lemma for lemma, count in result['most_frequent_lemmas']]  # Extract the lemmas from the list of tuples
         most_frequent_lemmas.update(lemmas)
@@ -53,7 +52,7 @@ def display_summary(results):
         dominant_topic_words = set(chain.from_iterable([results['top_words_per_topic'][topic] for topic in result['dominant_topics']]))
         all_topic_words.update(dominant_topic_words)
 
-    # Calculate intersections
+    # Calculate intersections between lemmas and topic words
     intersecting_words = most_frequent_lemmas.intersection(all_topic_words)
     total_topic_words = len(all_topic_words)
     intersection_size = len(intersecting_words)
@@ -61,7 +60,7 @@ def display_summary(results):
     # Calculate percentage of topic words overlapping with lemmas
     topic_intersection_ratio = (intersection_size / total_topic_words * 100) if total_topic_words > 0 else 0
 
-    # Display summary
+    # Display a summary with information
     print("\nSummary:")
     print(f"Total Most Frequent Lemmas: {len(most_frequent_lemmas)}")
     print(f"Total Topic Words: {total_topic_words}")
@@ -84,24 +83,26 @@ def display_jaccard_similarities(results, visualize_lemmas=False):
         if visualize_lemmas:
             visualize_lemma_frequency(result['most_frequent_lemmas'], result['document'])
     
-    # Print global Jaccard similarity (average)
+    # Print global Jaccard similarity (average accross all documents)
     avg_jaccard_similarity = sum(global_jaccard_sim) / len(global_jaccard_sim)
     print(f"\nGlobal Jaccard Similarity (Average for all documents): {avg_jaccard_similarity:.3f}")
 
-# Load the pickle file and display the results
-filename = '/home/ampharis/Dokumente/AP/Extracted Text - protoype code/results_decade_2.pkl'  # Change to your actual file path
+## Main execution point
+
+# Load the results from a pickle file
+filename = 'your/path/file.pkl'  # Change to actual file path
 results = load_results(filename)
 
-# Display Topics and their Top Words
+# Display the top words for each topic
 print("Top Words Per Topic:")
 display_topics(results['top_words_per_topic'])
 
-# Visualize Word Clouds for each topic
+# Visualize word clouds for each topic
 visualize_wordclouds(results['top_words_per_topic'])
 
-# Display Summary Information (lemmas, topic words, intersections)
+# Display the summary of lemmas, topic words, intersections, and overlap percentage
 display_summary(results)
 
-# Display Jaccard Similarity results for each document and global average, with optional lemma visualization
+# Display Jaccard similarity results for each document and global average
 print("\nJaccard Similarity Results:")
 display_jaccard_similarities(results, visualize_lemmas=False)  # Set to True to enable lemma frequency visualization
