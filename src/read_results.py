@@ -1,4 +1,5 @@
 import pickle
+import os
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 from itertools import chain
@@ -60,8 +61,12 @@ def display_summary(results):
     # Calculate percentage of topic words overlapping with lemmas
     topic_intersection_ratio = (intersection_size / total_topic_words * 100) if total_topic_words > 0 else 0
 
+    # Count the number of processed documents
+    num_docs = len(results['comparison_results'])
+
     # Display a summary with information
     print("\nSummary:")
+    print(f"Number of Processed Documents: {num_docs}")
     print(f"Total Most Frequent Lemmas: {len(most_frequent_lemmas)}")
     print(f"Total Topic Words: {total_topic_words}")
     print(f"Intersecting Lemmas and Topic Words: {intersection_size}")
@@ -87,10 +92,61 @@ def display_jaccard_similarities(results, visualize_lemmas=False):
     avg_jaccard_similarity = sum(global_jaccard_sim) / len(global_jaccard_sim)
     print(f"\nGlobal Jaccard Similarity (Average for all documents): {avg_jaccard_similarity:.3f}")
 
+# Function to save Jaccard similarity results and topic_intersection_ratio
+def save_jaccard_and_topic_intersection(results, input_filename):
+    jaccard_data = []
+    topic_intersection_ratio = 0  # Initialize ratio for calculation
+
+    # Calculate Jaccard similarities for each document
+    for result in results['comparison_results']:
+        lemmas = set([lemma for lemma, count in result['most_frequent_lemmas']])
+        common_words = set(result['common_words'])
+        jaccard_sim = len(common_words) / len(lemmas.union(common_words)) if len(lemmas.union(common_words)) > 0 else 0
+        jaccard_data.append(jaccard_sim)
+
+    # Calculate topic intersection ratio
+    most_frequent_lemmas = set()
+    all_topic_words = set()
+
+    for result in results['comparison_results']:
+        lemmas = [lemma for lemma, count in result['most_frequent_lemmas']]  # Extract the lemmas from the list of tuples
+        most_frequent_lemmas.update(lemmas)
+
+        # Collect topic words from all dominant topics
+        dominant_topic_words = set(chain.from_iterable([results['top_words_per_topic'][topic] for topic in result['dominant_topics']]))
+        all_topic_words.update(dominant_topic_words)
+
+    intersecting_words = most_frequent_lemmas.intersection(all_topic_words)
+    total_topic_words = len(all_topic_words)
+    intersection_size = len(intersecting_words)
+    
+    if total_topic_words > 0:
+        topic_intersection_ratio = (intersection_size / total_topic_words) * 100  # Calculate percentage
+
+    # Extract time span from input filename
+    time_span = os.path.basename(input_filename).replace('results_', '').replace('.pkl', '')
+
+    # Create 'Comparison Results' folder if it doesn't exist
+    comparison_folder = 'Comparison Results'
+    if not os.path.exists(comparison_folder):
+        os.makedirs(comparison_folder)
+
+    save_filename = os.path.join(comparison_folder, f'data_{time_span}.pkl')
+
+    # Save both Jaccard similarity and topic_intersection_ratio to file
+    save_data = {
+        'jaccard_similarities': jaccard_data,
+        'topic_intersection_ratio': topic_intersection_ratio
+    }
+
+    with open(save_filename, 'wb') as f:
+        pickle.dump(save_data, f)
+
+
 ## Main execution point
 
 # Load the results from a pickle file
-filename = 'your/path/file.pkl'  # Change to actual file path
+filename = '/home/ampharis/Dokumente/AP/Project/Results/topic_model_results_2021-2025.pkl'  # Change to actual file path
 results = load_results(filename)
 
 # Display the top words for each topic
@@ -106,3 +162,6 @@ display_summary(results)
 # Display Jaccard similarity results for each document and global average
 print("\nJaccard Similarity Results:")
 display_jaccard_similarities(results, visualize_lemmas=False)  # Set to True to enable lemma frequency visualization
+
+# Save the Jaccard similarity results and topic_intersection_ratio
+save_jaccard_and_topic_intersection(results, filename)
