@@ -28,6 +28,9 @@ The Data used for this project are the Bundesrat files from the German Parliamen
 
 To get started, follow these steps to process the documents and generate the topic models:
 
+### *Before running the code* 
+If you don't plan on generating the .pkl files for the `Comparison Results` folder yourself make sure to move either the code files inside the `src` folder to the main directory or move the `Comparison Results` folder into the `src` folder.
+
 ### 1. *Process Documents*
 Run the `process_documents.py` script to process your documents and generate results.
 - This will traverse through all subfolders in the directory containing your .xmi files and process them using topic modeling and lemma frequency analysis.
