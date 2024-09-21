@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.widgets import CheckButtons
 import numpy as np
 from scipy.stats import norm
+import pandas as pd
 
 # Load Jaccard similarity data and topic_intersection_ratio from files
 def load_data(filenames):
@@ -31,13 +32,17 @@ def plot_histograms(jaccard_data_list, labels):
 
 # Function to calculate and display mean and standard deviation
 def calculate_statistics(jaccard_data_list, labels):
+    means = []
+    std_devs = []
     for data, label in zip(jaccard_data_list, labels):
         mean = np.mean(data)
         std_dev = np.std(data)
         print(f"{label}: Mean = {mean:.3f}, Standard Deviation = {std_dev:.3f}")
+        means.append(mean)
+        std_devs.append(std_dev)
+    return means, std_devs
 
 # Function to toggle visibility of a line in the plot
-# Toggle visibility function
 def toggle_visibility(label, lines, labels):
     index = labels.index(label)
     lines[index].set_visible(not lines[index].get_visible())  # Toggle the visibility of the corresponding line
@@ -50,14 +55,16 @@ def plot_normal_distribution_interactive(jaccard_data_list, labels):
     plt.subplots_adjust(left=0.3, right=0.8)  # Adjust the space to fit both checkboxes on the left and legend on the right
 
     lines = []
+    valid_labels = []  # To store labels with visible lines
     # Create the normal distribution lines for each dataset
     for data, label in zip(jaccard_data_list, labels):
         mean = np.mean(data)
         std_dev = np.std(data)
 
-        # Check if standard deviation is zero, skip if true
+        # Check if standard deviation is zero
         if std_dev == 0:
             print(f"Skipping dataset '{label}' due to zero standard deviation.")
+            plt.plot(mean, 0, marker='o', markersize=5, label=f"{label} (zero std dev)")
             continue
 
         x = np.linspace(min(data), max(data), 100)
@@ -66,6 +73,7 @@ def plot_normal_distribution_interactive(jaccard_data_list, labels):
         # Only plot if data is valid
         line, = ax.plot(x, y, label=label)
         lines.append(line)
+        valid_labels.append(label)  # Add the label only if a valid line is created
 
     ax.set_title("Normal Distribution of Jaccard Similarity")
     ax.set_xlabel("Jaccard Similarity")
@@ -74,19 +82,20 @@ def plot_normal_distribution_interactive(jaccard_data_list, labels):
     # Place the legend outside the plot on the right
     ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
 
-    # Add CheckButtons widget outside the plot on the left
+    # Adjust the checkboxes to match only the valid labels
     check_ax = plt.axes([0.01, 0.4, 0.2, 0.5])  # Position for the checkboxes on the left of the plot
-    check = CheckButtons(check_ax, labels, [True] * len(labels))  # Create checkboxes, all lines visible by default
+    check = CheckButtons(check_ax, valid_labels, [True] * len(valid_labels))  # Create checkboxes for valid lines
 
     # Register callback function to toggle visibility
-    check.on_clicked(lambda label: toggle_visibility(label, lines, labels))
+    check.on_clicked(lambda label: toggle_visibility(label, lines, valid_labels))
 
     plt.show()
+
 
 # Function to extract only the time span from a filename (e.g., '2021-2025')
 def extract_time_span(filename):
     # Remove 'jaccard_data_' and '.pkl' to extract just the time span
-    return os.path.basename(filename).replace('jaccard_data_', '').replace('topic_model_', '').replace('.pkl', '')
+    return os.path.basename(filename).replace('data_', '').replace('topic_model_', '').replace('.pkl', '')
 
 # Function to load and compare specific files or all files in the "Comparison Results" folder
 def compare_results(files=None, comparison_folder='Comparison Results'):
@@ -110,8 +119,9 @@ def compare_results(files=None, comparison_folder='Comparison Results'):
     else:
         print("More than two files, skipping histogram.")
     
-    # Calculate statistics
-    calculate_statistics(jaccard_data_list, labels)
+    # Calculate statistics and plot mean/std deviation graph
+    means, std_devs = calculate_statistics(jaccard_data_list, labels)
+    plot_mean_std_graph(means, std_devs, labels)
 
     # Plot normal distributions with interactive toggle for visibility
     plot_normal_distribution_interactive(jaccard_data_list, labels)
@@ -136,10 +146,29 @@ def display_intersection_ratios_table(ratios, labels):
     table = ax.table(cellText=table_data, colLabels=column_labels, cellLoc='center', loc='center')
 
     # Adjust font size and table appearance
-    table.set_fontsize(12)
-    table.scale(1, 2)
+    table.auto_set_font_size(False)
+    table.set_fontsize(10)
+    table.scale(1.5, 1.5)  # Adjust scaling for better readability
 
-    plt.title("Topic Intersection Ratios Table", pad=20)
+    # Add the title above the table
+    plt.suptitle("Topic Intersection Ratios", fontsize=14, y=1.15)
+
+    plt.show()
+
+# Function to plot the mean and standard deviation graph
+def plot_mean_std_graph(means, std_devs, labels):
+    x = np.arange(len(labels))
+    
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.errorbar(x, means, yerr=std_devs, fmt='o', capsize=5, capthick=2, color='b', ecolor='r')
+    
+    ax.set_title("Mean and Standard Deviation of Jaccard Similarity")
+    ax.set_xlabel("Time Span")
+    ax.set_ylabel("Mean Jaccard Similarity")
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, rotation=45)
+    
+    plt.grid(True, linestyle='--', alpha=0.7)
     plt.show()
 
 ## Main execution point
